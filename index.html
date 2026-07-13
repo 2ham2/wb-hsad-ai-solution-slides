@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>WB × HSAD AI 솔루션 공동 개발</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<style>
+  :root{
+    --bg:#EEF2FB;
+    --ink:#14151A;
+    --ink2:#3A3D46;
+    --sub:#6B7280;
+    --muted:#9AA1B4;
+    --blue:#3B5CFF;
+    --blue-deep:#2140D8;
+    --blue-soft:#EAF0FF;
+    --line:#E3E7F3;
+    --white:#FFFFFF;
+    --shadow: 0 20px 40px -26px rgba(30,41,80,.30);
+    --shadow-sm: 0 10px 22px -14px rgba(30,41,80,.26);
+    --p1:#3350FF; --p2:#4C63FB; --p3:#6677FB; --p4:#8189FB; --p5:#9C97FB;
+    --slide-gap: clamp(14px,2.2vh,26px);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;}
+  body{
+    font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    background:var(--bg);
+    color:var(--ink);
+  }
+
+  .viewport{position:relative;width:100%;height:100vh;overflow:hidden;}
+  #track{
+    display:flex;flex-direction:column;
+    transition:transform .6s cubic-bezier(.65,0,.35,1);
+    will-change:transform;
+  }
+
+  .slide{
+    flex:0 0 100vh;
+    height:100vh;
+    width:100%;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0 clamp(48px,7vw,140px);
+    border-bottom:1px solid rgba(30,41,80,.10);
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .slide.in-view{opacity:1;transform:translateY(0);}
+
+  .slide-inner{
+    position:relative;z-index:1;
+    width:100%;max-width:1360px;
+    display:flex;flex-direction:column;align-items:center;
+    gap:var(--slide-gap);
+  }
+
+  /* decorative shapes */
+  .blob{position:absolute;border-radius:50%;pointer-events:none;z-index:0;}
+  .blob-blue{background:radial-gradient(circle at 32% 30%, rgba(59,92,255,.18), rgba(59,92,255,0) 68%);}
+  .blob-soft{background:radial-gradient(circle at 60% 40%, rgba(120,140,255,.13), rgba(120,140,255,0) 70%);}
+  .dotgrid{position:absolute;pointer-events:none;z-index:0;background-image:radial-gradient(circle, rgba(59,92,255,.30) 1.6px, transparent 1.7px);background-size:20px 20px;opacity:.5;}
+
+  /* header block */
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-weight:800;color:var(--blue-deep);font-size:clamp(12.5px,1vw,15px);letter-spacing:.1em;text-transform:uppercase;text-align:center;}
+  .eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 5px rgba(59,92,255,.15);}
+  .headline{font-weight:800;font-size:clamp(22px,2.7vw,36px);line-height:1.4;color:var(--ink);letter-spacing:-.01em;text-align:center;}
+  .subtext{font-size:clamp(13.5px,1.15vw,16.5px);color:var(--sub);line-height:1.7;max-width:920px;font-weight:500;text-align:center;}
+
+  .body-area{width:100%;text-align:left;}
+
+  /* chips (applied-industry format) */
+  .chip-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+  .chip{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 18px;border-radius:16px;background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-sm);min-width:76px;text-align:center;}
+  .chip .main{font-size:13.5px;font-weight:700;color:var(--ink2);}
+  .chip .sub{font-size:11px;font-weight:500;color:var(--muted);margin-top:2px;}
+  .chip.wide{max-width:820px;padding:14px 26px;border-radius:14px;}
+  .chip.wide .main{font-size:13.8px;font-weight:600;color:var(--ink2);line-height:1.5;white-space:normal;}
+  .chip-ellipsis{display:flex;align-items:center;color:var(--muted);font-weight:800;font-size:16px;letter-spacing:.08em;padding:0 2px;}
+
+  /* card */
+  .card{background:var(--white);border-radius:20px;box-shadow:var(--shadow);padding:22px 24px;text-align:left;}
+  .card h3{font-size:clamp(15px,1.2vw,17.5px);font-weight:800;color:var(--ink);margin-bottom:8px;line-height:1.45;}
+  .card p{font-size:clamp(12.5px,.98vw,14px);color:var(--sub);line-height:1.6;font-weight:500;}
+  .icon-badge{width:38px;height:38px;border-radius:11px;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;color:var(--blue);margin-bottom:10px;}
+  .icon-badge svg{width:19px;height:19px;}
+
+  /* pill */
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;color:#fff;font-weight:700;font-size:13px;white-space:nowrap;box-shadow:0 10px 18px -10px rgba(59,92,255,.5);}
+  .pill .num{opacity:.75;font-weight:800;}
+
+  /* flow */
+  .flow-row{display:flex;gap:16px;align-items:flex-start;width:100%;}
+  .flow-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;}
+  .flow-line{width:2px;height:20px;background-image:linear-gradient(var(--blue) 55%, transparent 45%);background-size:2px 9px;background-repeat:repeat-y;position:relative;}
+  .flow-line::after{content:'';position:absolute;top:50%;left:50%;width:9px;height:9px;border-radius:50%;background:#fff;border:3px solid var(--blue);transform:translate(-50%,-50%);}
+  .flow-card{background:var(--white);border-radius:13px;box-shadow:var(--shadow-sm);padding:14px 13px;text-align:center;width:100%;}
+  .flow-card p{font-size:12px;color:var(--sub);line-height:1.55;font-weight:500;}
+
+  /* two column */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;}
+  .mini-card{background:var(--white);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow-sm);text-align:left;}
+  .mini-card .tag{display:block;font-size:12px;font-weight:800;color:var(--blue-deep);margin-bottom:8px;letter-spacing:.02em;}
+  .mini-card p{font-size:13px;color:var(--sub);line-height:1.58;font-weight:500;}
+  .mini-card p+p{margin-top:10px;}
+  .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;}
+
+  /* limit cards */
+  .limit-grid{display:grid;gap:16px;align-items:stretch;width:100%;}
+  .limit-grid.cols-2{grid-template-columns:repeat(2,1fr);}
+  .limit-grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  .limit-card{background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:20px 22px;text-align:left;}
+  .limit-card .icon-badge{background:#FFF1EA;color:#E8622E;}
+  .limit-card h4{font-size:clamp(13.5px,1.05vw,15.5px);font-weight:800;color:var(--ink);margin-bottom:7px;line-height:1.4;}
+  .limit-card p{font-size:12.4px;color:var(--sub);line-height:1.56;font-weight:500;}
+
+  /* scale slider */
+  .scale-row{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
+  .scale-row:last-child{margin-bottom:0;}
+  .scale-label{width:170px;font-size:12.6px;color:var(--ink);font-weight:700;line-height:1.4;}
+  .scale-label.right{text-align:right;color:var(--muted);font-weight:600;width:130px;}
+  .scale-track{flex:1;height:6px;background:#E3E7F3;border-radius:999px;position:relative;}
+  .scale-dot{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--blue);border:4px solid #fff;box-shadow:0 6px 12px rgba(59,92,255,.4);transform:translate(-50%,-50%);}
+
+  /* agenda rows */
+  .idea-rows{display:flex;flex-direction:column;gap:14px;width:100%;}
+  .idea-row{display:flex;align-items:center;gap:22px;background:var(--white);border-radius:18px;box-shadow:var(--shadow);padding:18px 26px;text-align:left;}
+  .idea-row .num{font-size:26px;font-weight:800;color:var(--blue);width:36px;flex-shrink:0;opacity:.55;}
+  .idea-row .icon-badge{margin:0;flex-shrink:0;}
+  .idea-row .content{flex:1;min-width:0;}
+  .idea-row h3{font-size:clamp(14.5px,1.1vw,16.5px);font-weight:800;color:var(--ink);margin-bottom:3px;line-height:1.4;}
+  .idea-row p{font-size:12.6px;color:var(--sub);line-height:1.55;font-weight:500;}
+
+  /* quote callout */
+  .quote-card{background:linear-gradient(135deg,var(--blue),#5567FB);border-radius:18px;padding:22px 28px;color:#fff;box-shadow:var(--shadow);text-align:left;width:100%;}
+  .quote-card .tag{font-size:12px;font-weight:800;letter-spacing:.06em;opacity:.85;margin-bottom:8px;}
+  .quote-card p{font-size:15px;font-weight:700;line-height:1.6;}
+
+  /* cover */
+  .cover-title{font-size:clamp(56px,8.4vw,100px);font-weight:800;color:var(--ink);line-height:1.3;letter-spacing:-.01em;text-align:center;margin-top:calc(var(--slide-gap) * -0.5);}
+  .cover-kicker{font-size:clamp(12.5px,1vw,15px);font-weight:800;color:var(--blue-deep);letter-spacing:.14em;text-transform:uppercase;}
+  .cover-chips{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:10px;}
+  .scroll-hint{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:1;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(59,92,255,.4);display:flex;align-items:center;justify-content:center;color:var(--blue);animation:bounce 1.8s infinite;}
+  @keyframes bounce{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,7px);}}
+
+  /* divider */
+  .divider-num{position:absolute;z-index:0;font-size:clamp(140px,20vw,240px);font-weight:800;line-height:1;opacity:.10;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;}
+  .divider-title{position:relative;z-index:1;font-size:clamp(26px,3.6vw,42px);font-weight:800;color:var(--ink);text-align:center;max-width:1100px;line-height:1.4;}
+
+  /* fixed chrome */
+  .brand-mark{position:fixed;top:26px;left:32px;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--blue-deep);z-index:50;text-transform:uppercase;opacity:.65;}
+  .counter{position:fixed;top:26px;right:32px;font-size:12px;font-weight:700;color:var(--muted);z-index:50;letter-spacing:.03em;}
+  .rail{position:fixed;right:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:50;align-items:flex-end;}
+  .rail-item{display:flex;align-items:center;gap:8px;cursor:pointer;}
+  .rail-num{display:none;font-size:13px;font-weight:800;color:var(--blue-deep);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .rail-item .dot{width:9px;height:9px;border-radius:999px;background:transparent;border:1.5px solid rgba(59,92,255,.35);transition:all .25s;flex-shrink:0;box-sizing:border-box;}
+  .rail-item.active .rail-num{display:inline-block;}
+  .rail-item.active .dot{width:11px;height:11px;background:var(--blue);border-color:var(--blue);}
+
+  section p b{color:var(--ink2);}
+</style>
+</head>
+<body>
+
+<div class="brand-mark">WB × HSAD</div>
+<div class="counter" id="counter">01 / 17</div>
+<div class="rail" id="rail"></div>
+
+<div class="viewport">
+<div id="track">
+
+  <!-- 01 COVER -->
+  <section class="slide">
+    <div class="blob blob-blue" style="width:700px;height:700px;top:-220px;right:-180px;"></div>
+    <div class="blob blob-soft" style="width:520px;height:520px;bottom:-180px;left:-140px;"></div>
+    <div class="slide-inner">
+      <div class="cover-kicker">[ WB x HSAD AI 솔루션 공동 개발 ]</div>
+      <div class="cover-title">CREATIVE IDEA</div>
+      <div class="cover-chips">
+        <span class="pill" style="background:var(--p1);">1. 실시간성 반영</span>
+        <span class="pill" style="background:var(--p3);">2. 업종별 데이터 기반 크리에이티브 자산화</span>
+        <span class="pill" style="background:var(--p5);">3. 숏폼 영상 대량생산</span>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </section>
+
+  <!-- 02 AGENDA -->
+  <section class="slide">
+    <div class="blob blob-blue" style="width:480px;height:480px;top:-160px;left:-140px;"></div>
+    <div class="slide-inner">
+      <div class="eyebrow">[ Creative Idea ]</div>
+      <div class="body-area">
+        <div class="idea-rows">
+          <div class="idea-row">
+            <div class="num">01</div>
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+            <div class="content">
+              <h3>실시간성 반영</h3>
+              <p>검색 급상승, 소셜 이슈, 날씨 API 등을 결합하여 실시간성 키워드를 도출하고 이에 맞는 크리에이티브를 신속하게 뽑아내는 구조</p>
+            </div>
+          </div>
+          <div class="idea-row">
+            <div class="num">02</div>
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+            <div class="content">
+              <h3>업종별 데이터 기반 크리에이티브 자산화</h3>
+              <p>과거에 집행했던 소재들의 비주얼 특징과 성과 데이터(CTR/CVR)를 매칭시켜서, 어떤 비주얼 요소가 잘 먹혔는지를 패턴으로 뽑아내고 다음 소재 생성 시 프롬프트나 체크리스트에 반영하는 구조</p>
+            </div>
+          </div>
+          <div class="idea-row">
+            <div class="num">03</div>
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/></svg></div>
+            <div class="content">
+              <h3>숏폼 영상 대량생산</h3>
+              <p>기존 롱폼 영상의 음성·자막·시각 신호를 결합해서 하이라이트 구간을 자동 추출, 6초~15초 사이의 다양한 길이의 숏폼 영상으로 재구성하여 플랫폼별 최적의 길이에 대응하는 구조</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 DIVIDER 1 -->
+  <section class="slide">
+    <div class="divider-num" style="color:var(--p1);">01</div>
+    <div class="divider-title">1. 실시간성 반영</div>
+  </section>
+
+  <!-- 04 IDEA1 : 개요 -->
+  <section class="slide">
+    <div class="dotgrid" style="width:200px;height:160px;top:80px;left:78%;"></div>
+    <div class="slide-inner">
+      <div class="eyebrow">1. 실시간성 반영</div>
+      <div class="headline">적용 가능한 업종 · 방향성</div>
+      <div class="subtext">검색 급상승, 소셜 이슈, 날씨 API 등을 결합하여 실시간성 키워드를 도출하고 이에 맞는 크리에이티브를 신속하게 뽑아내는 구조</div>
+      <div class="body-area" style="display:flex;justify-content:center;">
+        <div class="chip-row">
+          <span class="chip"><span class="main">증권</span></span>
+          <span class="chip"><span class="main">패션</span><span class="sub">(아웃도어)</span></span>
+          <span class="chip"><span class="main">여행</span></span>
+          <span class="chip"><span class="main">건기식</span></span>
+          <span class="chip"><span class="main">배달 플랫폼</span></span>
+          <span class="chip-ellipsis">...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 IDEA1 : 필요데이터 -->
+  <section class="slide">
+    <div class="blob blob-soft" style="width:480px;height:480px;top:-150px;right:-110px;"></div>
+    <div class="slide-inner">
+      <div class="eyebrow">1. 실시간성 반영</div>
+      <div class="headline">필요 데이터</div>
+      <div class="body-area" style="display:flex;gap:18px;">
+        <div class="card" style="flex:1;">
+          <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+          <h3>실시간 신호 소스</h3>
+          <p>검색 트렌드 API(구글 트렌드, 네이버 데이터랩 등) : 검색량 급상승 감지<br>소셜 리스닝 데이터 : 언급량이 갑자기 늘어난 키워드<br>날씨 API : 기온, 강수, 미세먼지 등 (예측 가능한 신호)</p>
+        </div>
+        <div class="card" style="flex:1;">
+          <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="10 8 16 12 10 16 10 8"/><circle cx="12" cy="12" r="10"/></svg></div>
+          <h3>신호-업종 매핑 테이블</h3>
+          <p>어떤 외부 신호가 어떤 업종/브랜드와 연관 있는지 정의해둔 규칙 또는 데이터<br>(예: "폭염" → 아이스크림/음료/여행(계곡·바다), "장마" → 배달/실내여가)</p>
+        </div>
+        <div class="card" style="flex:1;">
+          <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          <h3>업종별 소재 템플릿/톤앤매너</h3>
+          <p>신호가 감지됐을 때 바로 꽂아넣을 수 있는 카피 구조(소구축 템플릿)가 미리 준비돼 있어야 생성 속도가 실제로 빠르게 진행될 수 있음</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 IDEA1 : 분석방식 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">1. 실시간성 반영</div>
+      <div class="headline">분석 방식</div>
+      <div class="body-area">
+        <div class="flow-row">
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p1);"><span class="num">1</span> 변화율 계산</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>각 신호 소스를 주기적으로(예: 시간 단위) 크롤링/조회해서 전일·전주 대비 변화율 계산</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p2);"><span class="num">2</span> 1차 필터링</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>임계치(예: 검색량 전일 대비 200% 이상 증가) 넘는 키워드를 "급상승 후보"로 1차 필터링</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p3);"><span class="num">3</span> 업종/브랜드 매칭</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>신호-업종 매핑 테이블과 대조해서 관련 업종/브랜드 매칭 (데이터가 쌓이면 임베딩 유사도 매칭으로 고도화 가능)</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p4);"><span class="num">4</span> 카피 즉시 생성</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>매칭된 업종의 카피 템플릿에 해당 키워드를 삽입해 LLM으로 카피 여러 안 즉시 생성</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 IDEA1 : 한계 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">1. 실시간성 반영</div>
+      <div class="headline">현실적인 한계와 주의할 점</div>
+      <div class="body-area" style="display:flex;flex-direction:column;gap:16px;">
+        <div class="limit-grid cols-2">
+          <div class="limit-card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+            <h4>업종별 금칙어 및 과장광고 표현 사전 필터링 시스템</h4>
+            <p>신호와 업종이 표면적으론 연관돼 보여도 실제로 결합하면 부적절한 경우가 많음. "감지된 이슈 = 논란성/민감 이슈인지" 판별하는 안전장치가 반드시 필요</p>
+          </div>
+          <div class="limit-card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg></div>
+            <h4>매핑 테이블 유지보수</h4>
+            <p>신호-업종 매핑 규칙은 계절/트렌드 변화에 따라 계속 업데이트해야 함. 방치하면 시간이 지날수록 매칭 정확도가 떨어짐</p>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="font-size:14.5px;font-weight:800;margin-bottom:12px;">속도와 검수의 트레이드오프 : 신호 유형별로 검수 강도를 다르게 두는 방식이 현실적</h4>
+          <div class="scale-row">
+            <div class="scale-label">저위험 신호<br><span style="color:var(--muted);font-weight:500;">(날씨류)</span></div>
+            <div class="scale-track"><div class="scale-dot" style="left:14%;"></div></div>
+            <div class="scale-label right">자동 발행</div>
+          </div>
+          <div class="scale-row">
+            <div class="scale-label">고위험 신호<br><span style="color:var(--muted);font-weight:500;">(소셜 이슈)</span></div>
+            <div class="scale-track"><div class="scale-dot" style="left:86%;"></div></div>
+            <div class="scale-label right">사람 승인 필수</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 DIVIDER 2 -->
+  <section class="slide">
+    <div class="divider-num" style="color:var(--p3);">02</div>
+    <div class="divider-title">2. 업종별 데이터 기반<br>크리에이티브 자산화</div>
+  </section>
+
+  <!-- 09 IDEA2 : 개요 + flow -->
+  <section class="slide">
+    <div class="blob blob-blue" style="width:460px;height:460px;top:-150px;left:-130px;"></div>
+    <div class="slide-inner">
+      <div class="eyebrow">2. 업종별 데이터 기반 크리에이티브 자산화</div>
+      <div class="headline">적용 가능한 업종 · 방향성</div>
+      <div class="subtext">과거에 집행했던 소재들의 비주얼 특징과 성과 데이터(CTR/CVR)를 매칭시켜서, 각 업종 및 페르소나엔 어떤 비주얼 요소가 잘 먹혔는지를 패턴으로 뽑아내고, 다음 소재 생성 시 프롬프트나 체크리스트에 반영하는 구조</div>
+      <div class="body-area" style="display:flex;justify-content:center;margin-bottom:6px;">
+        <div class="chip-row">
+          <span class="chip wide"><span class="main">데이터 볼륨이 중요해서 HSAD &amp; WB에서 이미 집행하고 있는, 집행해본 이력이 있는 업종</span></span>
+        </div>
+      </div>
+      <div class="body-area">
+        <div class="flow-row">
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p1);"><span class="num">1</span> 데이터 수집</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>소재 원본 + 매체 성과 리포트</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p2);"><span class="num">2</span> 비주얼 특징 추출</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>인물·색상·텍스트밀도·레이아웃</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p3);"><span class="num">3</span> 통합 저장</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>소재 x 특징 x 성과 테이블</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p4);"><span class="num">4</span> 세그먼트별 상관 분석</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>업종-타겟별 성과 패턴 도출</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p5);"><span class="num">5</span> 활용</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>프롬프트 반영 / 참고카드 / 신규 소재 스코어링</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 IDEA2 : 필요데이터 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">2. 업종별 데이터 기반 크리에이티브 자산화</div>
+      <div class="headline">필요 데이터</div>
+      <div class="body-area two-col">
+        <div class="mini-card">
+          <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+          <span class="tag">소재 원본 + 메타데이터 / 성과 데이터</span>
+          <p>과거 집행 소재 이미지 파일 / 매체·업종·캠페인·타겟 세그먼트 태그 / 집행 기간, 노출량</p>
+          <p>CTR, CVR, 전환당비용 등 매체 리포트 지표 — 소재별로 최소 일정 노출량 이상 확보된 것만 (노출 적은 소재는 노이즈가 큼)</p>
+        </div>
+        <div class="mini-card">
+          <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <span class="tag">비주얼 특징 추출 (이미지에서 뽑아낼 수 있는 특징)</span>
+          <div class="mini-grid">
+            <p><b>구성적 특징</b><br>인물 등장 여부·수, 클로즈업/전체샷 여부, 텍스트 영역 비율</p>
+            <p><b>색채적 특징</b><br>주조색, 채도/명도 평균, 배경색 vs 브랜드 컬러 대비</p>
+            <p><b>레이아웃</b><br>여백 비율, 좌우/상하 대칭성, CTA 버튼 위치</p>
+            <p><b>의미적 특징</b><br>단독컷인지 라이프스타일컷인지, 실사인지 일러스트인지</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 IDEA2 : 분석방식 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">2. 업종별 데이터 기반 크리에이티브 자산화</div>
+      <div class="headline">분석 방식</div>
+      <div class="body-area">
+        <div class="flow-row" style="max-width:820px;margin:0 auto;">
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p1);"><span class="num">1</span> 통합 테이블 구축</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>소재 × 특징 × 성과 테이블 구축</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p3);"><span class="num">2</span> 상관관계 분석</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>업종/세그먼트별로 그룹화해서 특징별 성과 상관관계 분석<br><span style="color:var(--muted);">(예: 20대 여성 타겟 + 뷰티 업종에서 인물 클로즈업 소재가 평균 CTR이 제품 단독컷보다 높다)</span></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 IDEA2 : 한계 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">2. 업종별 데이터 기반 크리에이티브 자산화</div>
+      <div class="headline">현실적인 한계와 주의할 점</div>
+      <div class="body-area">
+        <div class="limit-grid cols-3">
+          <div class="limit-card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+            <h4>데이터 볼륨 문제</h4>
+            <p>세그먼트를 너무 세밀하게 쪼개면 각 그룹 샘플 수가 금방 부족해짐</p>
+          </div>
+          <div class="limit-card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+            <h4>과적합 위험</h4>
+            <p>"과거에 이게 잘됐다"가 반복되면 소재가 획일화 — "강제 규칙"이 아니라 "참고 신호"로 포지셔닝</p>
+          </div>
+          <div class="limit-card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg></div>
+            <h4>트렌드 변화</h4>
+            <p>비주얼 선호는 시간에 따라 변하기 때문에 최신 데이터로 주기적으로 재학습해야 함</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 DIVIDER 3 -->
+  <section class="slide">
+    <div class="divider-num" style="color:var(--p5);">03</div>
+    <div class="divider-title">3. 숏폼 영상 대량생산</div>
+  </section>
+
+  <!-- 14 IDEA3 : 개요 + flow -->
+  <section class="slide">
+    <div class="blob blob-soft" style="width:480px;height:480px;bottom:-150px;right:-120px;"></div>
+    <div class="slide-inner">
+      <div class="eyebrow">3. 숏폼 영상 대량생산</div>
+      <div class="headline">적용 가능한 업종 · 방향성</div>
+      <div class="subtext">기존 롱폼 영상의 음성·자막·시각 신호를 결합해서 하이라이트 구간을 자동 추출, 6초~15초 사이의 다양한 길이의 숏폼 영상으로 재구성하여 플랫폼별 최적의 길이에 대응하는 구조</div>
+      <div class="body-area" style="display:flex;justify-content:center;margin-bottom:4px;">
+        <div class="chip-row">
+          <span class="chip"><span class="main">금융/보험</span><span class="sub">(전문가 인터뷰·상품 설명 영상)</span></span>
+          <span class="chip"><span class="main">여행</span><span class="sub">(브이로그형 영상)</span></span>
+          <span class="chip"><span class="main">F&amp;B</span><span class="sub">(쿠킹·먹방 영상)</span></span>
+          <span class="chip"><span class="main">가전/전자제품</span><span class="sub">(언박싱·리뷰 영상)</span></span>
+          <span class="chip"><span class="main">에듀테크/교육</span><span class="sub">(강의 영상)</span></span>
+          <span class="chip-ellipsis">...</span>
+        </div>
+      </div>
+      <div class="body-area">
+        <div class="flow-row">
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p1);"><span class="num">1</span> 음성·자막 추출</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>STT로 타임스탬프 포함 스크립트 확보</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p2);"><span class="num">2</span> 하이라이트 스코어링</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>음성강조·키워드밀도·장면전환 결합</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p3);"><span class="num">3</span> 길이별 자동 트리밍</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>6초·9초·15초 버전 자동 컷팅</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p4);"><span class="num">4</span> 세로 크롭 변환</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>피사체 추적 기반 9:16 자동 크롭</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p5);"><span class="num">5</span> 최종 렌더링</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>자막 재생성 + 플랫폼별 최종 렌더링</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 IDEA3 : 필요데이터 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">3. 숏폼 영상 대량생산</div>
+      <div class="headline">필요 데이터</div>
+      <div class="body-area two-col">
+        <div class="mini-card">
+          <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/></svg></div>
+          <span class="tag">원본 영상 파일</span>
+          <p>롱폼 소재 원본(해상도, 프레임레이트 정보 포함)</p>
+          <p>기존에 만들어둔 자막(SRT) 파일이 있다면 재사용 가능</p>
+        </div>
+        <div class="mini-card">
+          <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+          <span class="tag">음성/텍스트 데이터</span>
+          <p>STT로 생성한 타임스탬프 포함 스크립트</p>
+          <p>업종/캠페인별 핵심 키워드 리스트 (하이라이트 구간을 추출하기 위한 스코어링 기준)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 IDEA3 : 분석방식 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">3. 숏폼 영상 대량생산</div>
+      <div class="headline">분석 방식</div>
+      <div class="body-area">
+        <div class="flow-row">
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p1);"><span class="num">1</span> 구간별 벡터화</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>영상을 짧은 시간 윈도우(예: 1~2초 단위)로 쪼개서 구간별 특징값(음량 변화, 키워드 등장, 장면전환 여부)을 벡터화</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p3);"><span class="num">2</span> 하이라이트 스코어 랭킹</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>각 신호에 가중치를 곱해 합산한 "하이라이트 스코어"로 전체 구간을 랭킹</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p5);"><span class="num">3</span> 가중치 튜닝/보정</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>과거 편집 이력이 있다면 실제 선택 구간과 비교해 가중치를 조정 / 없다면 감으로 정하고 피드백으로 점진적 보정</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 IDEA3 : 한계 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">3. 숏폼 영상 대량생산</div>
+      <div class="headline">현실적인 한계와 주의할 점</div>
+      <div class="body-area">
+        <div class="limit-grid cols-2">
+          <div class="limit-card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg></div>
+            <h4>맥락 이해의 한계</h4>
+            <p>AI가 뽑은 구간이 수치적으로는 "하이라이트"지만 맥락상 앞뒤 내용이 끊겨 이상하게 들릴 수 있음. 광고 소재는 문제 제기 → 해결 → CTA 흐름이 중요해 단순 신호만으로는 스토리 구조를 못 읽을 수 있음</p>
+          </div>
+          <div class="limit-card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></div>
+            <h4>업종/포맷별 하이라이트 기준이 다름</h4>
+            <p>제품 시연 영상과 인터뷰형 영상은 "좋은 구간"의 정의 자체가 다름. 하나의 범용 스코어링 로직으로 모든 소재를 커버하기 어려워 포맷별 가중치 튜닝 필요</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script>
+  const track = document.getElementById('track');
+  const sections = document.querySelectorAll('.slide');
+  const rail = document.getElementById('rail');
+  const counter = document.getElementById('counter');
+  const total = sections.length;
+
+  sections.forEach((_, i) => {
+    const item = document.createElement('div');
+    item.className = 'rail-item' + (i === 0 ? ' active' : '');
+    item.innerHTML = '<span class="rail-num">' + (i + 1) + '</span><span class="dot"></span>';
+    item.addEventListener('click', () => goTo(i));
+    rail.appendChild(item);
+  });
+  const dotEls = rail.querySelectorAll('.rail-item');
+
+  let index = 0;
+  let locked = false;
+  const TRANSITION_MS = 620;
+
+  function render(){
+    track.style.transform = 'translateY(-' + (index * 100) + 'vh)';
+    dotEls.forEach((d, i) => d.classList.toggle('active', i === index));
+    counter.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    sections[index].classList.add('in-view');
+  }
+
+  function goTo(i){
+    const next = Math.max(0, Math.min(total - 1, i));
+    if (next === index) return;
+    index = next;
+    render();
+    locked = true;
+    setTimeout(() => { locked = false; }, TRANSITION_MS);
+  }
+
+  render();
+
+  window.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (locked || Math.abs(e.deltaY) < 2) return;
+    goTo(index + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: false });
+
+  let touchStartY = null;
+  window.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+  window.addEventListener('touchend', (e) => {
+    if (touchStartY === null || locked) return;
+    const dy = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 40) goTo(index + (dy > 0 ? 1 : -1));
+    touchStartY = null;
+  }, { passive: true });
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowDown','PageDown',' '].includes(e.key)) { e.preventDefault(); goTo(index + 1); }
+    if (['ArrowUp','PageUp'].includes(e.key)) { e.preventDefault(); goTo(index - 1); }
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End') goTo(total - 1);
+  });
+</script>
+
+</body>
+</html>
