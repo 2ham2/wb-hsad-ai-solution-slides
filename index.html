@@ -103,8 +103,7 @@
   /* flow */
   .flow-row{display:flex;gap:16px;align-items:flex-start;width:100%;}
   .flow-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;}
-  .flow-line{width:2px;height:20px;background-image:linear-gradient(var(--blue) 55%, transparent 45%);background-size:2px 9px;background-repeat:repeat-y;position:relative;}
-  .flow-line::after{content:'';position:absolute;top:50%;left:50%;width:9px;height:9px;border-radius:50%;background:#fff;border:3px solid var(--blue);transform:translate(-50%,-50%);}
+  .flow-line{width:2px;height:20px;background:rgba(59,92,255,.35);}
   .flow-card{background:var(--white);border-radius:13px;box-shadow:var(--shadow-sm);padding:14px 13px;text-align:center;width:100%;}
   .flow-card p{font-size:12px;color:var(--sub);line-height:1.55;font-weight:500;}
 
@@ -287,22 +286,22 @@
           <div class="flow-step">
             <span class="pill" style="background:var(--p1);"><span class="num">1</span> 변화율 계산</span>
             <div class="flow-line"></div>
-            <div class="flow-card"><p>각 신호 소스를 주기적으로(예: 시간 단위) 크롤링/조회해서 전일·전주 대비 변화율 계산</p></div>
+            <div class="flow-card"><p>각 신호 소스를 주기적으로(예: 시간 단위)<br>크롤링/조회해서 전일·전주 대비 변화율 계산</p></div>
           </div>
           <div class="flow-step">
             <span class="pill" style="background:var(--p2);"><span class="num">2</span> 1차 필터링</span>
             <div class="flow-line"></div>
-            <div class="flow-card"><p>임계치(예: 검색량 전일 대비 200% 이상 증가) 넘는 키워드를 "급상승 후보"로 1차 필터링</p></div>
+            <div class="flow-card"><p>임계치(예: 검색량 전일 대비 200% 이상 증가) 넘는 키워드를<br>"급상승 후보"로 1차 필터링</p></div>
           </div>
           <div class="flow-step">
             <span class="pill" style="background:var(--p3);"><span class="num">3</span> 업종/브랜드 매칭</span>
             <div class="flow-line"></div>
-            <div class="flow-card"><p>신호-업종 매핑 테이블과 대조해서 관련 업종/브랜드 매칭 (데이터가 쌓이면 임베딩 유사도 매칭으로 고도화 가능)</p></div>
+            <div class="flow-card"><p>신호-업종 매핑 테이블과 대조해서 관련 업종/브랜드 매칭<br>(데이터가 쌓이면 임베딩 유사도 매칭으로 고도화 가능)</p></div>
           </div>
           <div class="flow-step">
             <span class="pill" style="background:var(--p4);"><span class="num">4</span> 카피 즉시 생성</span>
             <div class="flow-line"></div>
-            <div class="flow-card"><p>매칭된 업종의 카피 템플릿에 해당 키워드를 삽입해 LLM으로 카피 여러 안 즉시 생성</p></div>
+            <div class="flow-card"><p>매칭된 업종의 카피 템플릿에 해당 키워드를 삽입해<br>LLM으로 카피 여러 안 즉시 생성</p></div>
           </div>
         </div>
       </div>
