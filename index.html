@@ -101,10 +101,10 @@
   .pill .num{opacity:.75;font-weight:800;}
 
   /* flow */
-  .flow-row{display:flex;gap:16px;align-items:flex-start;width:100%;}
+  .flow-row{display:flex;gap:16px;align-items:stretch;width:100%;}
   .flow-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;}
-  .flow-line{width:2px;height:20px;background:rgba(59,92,255,.35);}
-  .flow-card{background:var(--white);border-radius:13px;box-shadow:var(--shadow-sm);padding:14px 13px;text-align:center;width:100%;}
+  .flow-line{width:2px;height:20px;background:rgba(59,92,255,.35);flex-shrink:0;}
+  .flow-card{background:var(--white);border-radius:13px;box-shadow:var(--shadow-sm);padding:14px 13px;text-align:center;width:100%;flex:1;display:flex;align-items:center;justify-content:center;}
   .flow-card p{font-size:12px;color:var(--sub);line-height:1.55;font-weight:500;}
 
   .flow-row.compact{gap:12px;}
