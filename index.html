@@ -175,6 +175,15 @@
   .rail-item.active .dot{width:11px;height:11px;background:var(--blue);border-color:var(--blue);}
 
   section p b{color:var(--ink2);}
+
+  /* brand proposal rows */
+  .brand-rows{display:flex;flex-direction:column;gap:14px;width:100%;}
+  .brand-row{display:flex;align-items:center;gap:22px;}
+  .brand-row .label{width:150px;flex-shrink:0;text-align:right;font-size:clamp(17px,1.5vw,21px);font-weight:800;color:var(--blue);line-height:1.3;}
+  .brand-row .boxes{display:flex;gap:12px;flex:1;flex-wrap:wrap;}
+  .brand-box{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:12px 18px;text-align:center;min-width:130px;flex:1;}
+  .brand-box .name{font-weight:800;font-size:14.5px;color:var(--ink);}
+  .brand-box .note{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4;font-weight:500;}
 </style>
 </head>
 <body>
@@ -443,22 +452,37 @@
     <div class="slide-inner">
       <div class="eyebrow">Target Proposal</div>
       <div class="headline">타겟 업종 및 브랜드 제안</div>
-      <div class="body-area" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="card">
-          <span class="chip highlight" style="margin-bottom:12px;"><span class="main">금융</span></span>
-          <p><b>제안 브랜드</b> : 키움증권, 하나은행<br>(기존 집행 이력 연계)</p>
-        </div>
-        <div class="card">
-          <span class="chip highlight" style="margin-bottom:12px;"><span class="main">게임</span></span>
-          <p><b>제안 브랜드</b> : 크래프톤(최근 비딩 성공 사례 분석 및 연계), 네오위즈(RFP 유입 관련해서 랩사 컨택 및 대행 연계 가능성 타진)</p>
-        </div>
-        <div class="card">
-          <span class="chip highlight" style="margin-bottom:12px;"><span class="main">여행 및 항공</span></span>
-          <p><b>제안 브랜드</b> : 하나투어<br>(과거 RFP 유입 이력 연계)</p>
-        </div>
-        <div class="card">
-          <span class="chip highlight" style="margin-bottom:12px;"><span class="main">기타 업종 및 확장풀</span></span>
-          <p>OB, 여기어때, 랄프로렌, 헤이딜러 등</p>
+      <div class="body-area">
+        <div class="brand-rows">
+          <div class="brand-row">
+            <div class="label">금융</div>
+            <div class="boxes">
+              <div class="brand-box"><div class="name">키움증권</div><div class="note">(기존 집행 이력 연계)</div></div>
+              <div class="brand-box"><div class="name">하나은행</div><div class="note">(기존 집행 이력 연계)</div></div>
+            </div>
+          </div>
+          <div class="brand-row">
+            <div class="label">여행·항공</div>
+            <div class="boxes">
+              <div class="brand-box"><div class="name">하나투어</div><div class="note">(과거 RFP 유입 이력 연계)</div></div>
+              <div class="brand-box"><div class="name">여기어때</div><div class="note">(기존 집행 이력 연계)</div></div>
+            </div>
+          </div>
+          <div class="brand-row">
+            <div class="label">게임</div>
+            <div class="boxes">
+              <div class="brand-box"><div class="name">크래프톤</div><div class="note">(최근 비딩 성공 사례 분석 및 연계)</div></div>
+              <div class="brand-box"><div class="name">네오위즈</div><div class="note">(RFP 유입 관련해서 랩사 컨택 및 대행 연계 가능성 타진)</div></div>
+            </div>
+          </div>
+          <div class="brand-row">
+            <div class="label">기타 브랜드 확장풀</div>
+            <div class="boxes">
+              <div class="brand-box"><div class="name">OB</div></div>
+              <div class="brand-box"><div class="name">랄프로렌</div></div>
+              <div class="brand-box"><div class="name">헤이딜러</div></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
