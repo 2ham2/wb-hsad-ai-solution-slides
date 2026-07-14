@@ -180,7 +180,7 @@
 <body>
 
 <div class="brand-mark">WB × HSAD</div>
-<div class="counter" id="counter">01 / 09</div>
+<div class="counter" id="counter">01 / 08</div>
 <div class="rail" id="rail"></div>
 
 <div class="viewport">
@@ -382,14 +382,13 @@
     <div class="divider-title">3. 숏폼 영상 대량생산</div>
   </section>
 
-  <!-- 08 IDEA3 : 개요 + flow -->
+  <!-- 08 IDEA3 : 개요 + 필요데이터 + flow -->
   <section class="slide">
     <div class="blob blob-soft" style="width:480px;height:480px;bottom:-150px;right:-120px;"></div>
     <div class="slide-inner">
       <div class="eyebrow">3. 숏폼 영상 대량생산</div>
-      <div class="headline">방향성</div>
       <div class="subtext">기존 롱폼 영상의 음성·자막·시각 신호를 결합해서 하이라이트 구간을 자동 추출, 6초~15초 사이의 다양한 길이의 숏폼 영상으로 재구성하여 플랫폼별 최적의 길이에 대응하는 구조</div>
-      <div class="body-area" style="display:flex;justify-content:center;margin-bottom:4px;">
+      <div class="body-area" style="display:flex;justify-content:center;">
         <div class="chip-row">
           <span class="chip"><span class="main">금융/보험</span><span class="sub">(전문가 인터뷰·상품 설명 영상)</span></span>
           <span class="chip"><span class="main">여행</span><span class="sub">(브이로그형 영상)</span></span>
@@ -399,43 +398,6 @@
           <span class="chip-ellipsis">...</span>
         </div>
       </div>
-      <div class="body-area">
-        <div class="flow-row">
-          <div class="flow-step">
-            <span class="pill" style="background:var(--p1);"><span class="num">1</span> 음성·자막 추출</span>
-            <div class="flow-line"></div>
-            <div class="flow-card"><p>STT로 타임스탬프 포함 스크립트 확보</p></div>
-          </div>
-          <div class="flow-step">
-            <span class="pill" style="background:var(--p2);"><span class="num">2</span> 하이라이트 스코어링</span>
-            <div class="flow-line"></div>
-            <div class="flow-card"><p>음성강조·키워드밀도·장면전환 결합</p></div>
-          </div>
-          <div class="flow-step">
-            <span class="pill" style="background:var(--p3);"><span class="num">3</span> 길이별 자동 트리밍</span>
-            <div class="flow-line"></div>
-            <div class="flow-card"><p>6초·9초·15초 버전 자동 컷팅</p></div>
-          </div>
-          <div class="flow-step">
-            <span class="pill" style="background:var(--p4);"><span class="num">4</span> 세로 크롭 변환</span>
-            <div class="flow-line"></div>
-            <div class="flow-card"><p>피사체 추적 기반 9:16 자동 크롭</p></div>
-          </div>
-          <div class="flow-step">
-            <span class="pill" style="background:var(--p5);"><span class="num">5</span> 최종 렌더링</span>
-            <div class="flow-line"></div>
-            <div class="flow-card"><p>자막 재생성 + 플랫폼별 최종 렌더링</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 09 IDEA3 : 필요데이터 + 분석방식 -->
-  <section class="slide">
-    <div class="slide-inner">
-      <div class="eyebrow">3. 숏폼 영상 대량생산</div>
-      <div class="headline">필요 데이터 · 분석 방식</div>
       <div class="body-area two-col">
         <div class="mini-card">
           <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/></svg></div>
@@ -453,19 +415,29 @@
       <div class="body-area">
         <div class="flow-row compact">
           <div class="flow-step">
-            <span class="pill" style="background:var(--p1);"><span class="num">1</span> 구간별 벡터화</span>
+            <span class="pill" style="background:var(--p1);"><span class="num">1</span> 음성·자막 추출</span>
             <div class="flow-line"></div>
-            <div class="flow-card"><p>영상을 짧은 시간 윈도우(예: 1~2초 단위)로 쪼개서 구간별 특징값(음량 변화, 키워드 등장, 장면전환 여부)을 벡터화</p></div>
+            <div class="flow-card"><p>STT로 타임스탬프 포함 스크립트 확보</p></div>
           </div>
           <div class="flow-step">
-            <span class="pill" style="background:var(--p3);"><span class="num">2</span> 하이라이트 스코어 랭킹</span>
+            <span class="pill" style="background:var(--p2);"><span class="num">2</span> 하이라이트 스코어링</span>
             <div class="flow-line"></div>
-            <div class="flow-card"><p>각 신호에 가중치를 곱해 합산한 "하이라이트 스코어"로 전체 구간을 랭킹</p></div>
+            <div class="flow-card"><p>음성강조·키워드밀도·장면전환 결합<br><span style="color:var(--muted);">(1~2초 단위로 벡터화 → 하이라이트 스코어 랭킹 → 편집 이력 기반 가중치 튜닝)</span></p></div>
           </div>
           <div class="flow-step">
-            <span class="pill" style="background:var(--p5);"><span class="num">3</span> 가중치 튜닝/보정</span>
+            <span class="pill" style="background:var(--p3);"><span class="num">3</span> 길이별 자동 트리밍</span>
             <div class="flow-line"></div>
-            <div class="flow-card"><p>과거 편집 이력이 있다면 실제 선택 구간과 비교해 가중치를 조정 / 없다면 감으로 정하고 피드백으로 점진적 보정</p></div>
+            <div class="flow-card"><p>6초·9초·15초 버전 자동 컷팅</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p4);"><span class="num">4</span> 세로 크롭 변환</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>피사체 추적 기반 9:16 자동 크롭</p></div>
+          </div>
+          <div class="flow-step">
+            <span class="pill" style="background:var(--p5);"><span class="num">5</span> 최종 렌더링</span>
+            <div class="flow-line"></div>
+            <div class="flow-card"><p>자막 재생성 + 플랫폼별 최종 렌더링</p></div>
           </div>
         </div>
       </div>
