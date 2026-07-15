@@ -184,6 +184,44 @@
   .brand-box{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:12px 16px;text-align:center;min-width:120px;flex:1;min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
   .brand-box .name{font-weight:800;font-size:14.5px;color:var(--ink);}
   .brand-box .note{font-size:10.6px;color:var(--muted);margin-top:4px;line-height:1.4;font-weight:500;}
+
+  /* solution matrix */
+  :root{ --hsad:#E1483F; --hsad-soft:#FDEDEC; --wb:#2C6BE8; --wb-soft:#EAF1FE; }
+  .matrix{display:grid;grid-template-columns:74px repeat(4,1fr);grid-auto-rows:auto;gap:10px;width:100%;}
+  .mx-corner{grid-column:1;grid-row:1;}
+  .mx-group{grid-row:1;display:flex;align-items:center;justify-content:center;padding:11px 12px;border-radius:13px;font-weight:800;font-size:clamp(14px,1.35vw,18px);color:#fff;letter-spacing:.01em;}
+  .mx-group.hsad{grid-column:2 / 4;background:linear-gradient(135deg,var(--hsad),#ED6A5A);box-shadow:0 12px 22px -12px rgba(225,72,63,.55);}
+  .mx-group.wb{grid-column:4 / 6;background:linear-gradient(135deg,var(--wb),#4C8BF5);box-shadow:0 12px 22px -12px rgba(44,107,232,.55);}
+  .mx-rowlabel{display:flex;align-items:center;justify-content:center;text-align:center;background:var(--ink);color:#fff;border-radius:12px;font-weight:800;font-size:12.4px;line-height:1.3;padding:8px 4px;}
+  .mx-rowlabel.soft{background:#fff;color:var(--ink);border:1.5px solid var(--ink);}
+  .mx-head{display:flex;align-items:center;justify-content:center;text-align:center;border-radius:12px;font-weight:800;font-size:clamp(12.5px,1.05vw,15px);padding:11px 8px;background:var(--white);}
+  .mx-head.hsad{border:1.6px solid var(--hsad);color:var(--hsad);}
+  .mx-head.wb{border:1.6px solid var(--wb);color:var(--wb);}
+  .mx-cell{background:var(--white);border-radius:12px;box-shadow:var(--shadow-sm);padding:13px 14px;text-align:left;display:flex;flex-direction:column;justify-content:center;}
+  .mx-cell.hsad{border-top:3px solid var(--hsad);}
+  .mx-cell.wb{border-top:3px solid var(--wb);}
+  .mx-cell p{font-size:11.6px;color:var(--sub);line-height:1.5;font-weight:500;}
+  .mx-cell.feat{background:var(--hsad-soft);}
+  .mx-cell.feat.wb{background:var(--wb-soft);}
+  .mx-cell .lead{display:block;font-size:12.2px;font-weight:800;color:var(--ink);margin-bottom:4px;line-height:1.4;}
+
+  /* section label + numbered ops cards */
+  .sec-label{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;color:var(--blue-deep);letter-spacing:.02em;align-self:flex-start;margin-bottom:9px;}
+  .sec-label::before{content:'';width:5px;height:14px;border-radius:3px;background:var(--blue);}
+  .ops-note{width:100%;background:var(--blue-soft);border:1px solid rgba(59,92,255,.18);border-radius:14px;padding:13px 18px;text-align:left;}
+  .ops-note p{font-size:12.8px;color:var(--ink2);line-height:1.6;font-weight:500;}
+  .ops-note b{color:var(--blue-deep);font-weight:800;}
+  .num-card{background:var(--white);border-radius:16px;box-shadow:var(--shadow);padding:16px 18px;text-align:left;position:relative;flex:1;}
+  .num-card .step{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;background:var(--blue);color:#fff;font-weight:800;font-size:12px;margin-bottom:8px;}
+  .num-card h3{font-size:clamp(13px,1.02vw,15px);font-weight:800;color:var(--ink);margin-bottom:5px;line-height:1.4;}
+  .num-card p{font-size:11.8px;color:var(--sub);line-height:1.52;font-weight:500;}
+  .num-card p b{color:var(--ink2);font-weight:700;}
+  .point-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%;}
+  .point-item{display:flex;gap:11px;background:var(--white);border-radius:13px;box-shadow:var(--shadow-sm);padding:12px 15px;text-align:left;}
+  .point-item .bullet{flex-shrink:0;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-top:6px;}
+  .point-item .tt{display:block;font-size:12.2px;font-weight:800;color:var(--ink);margin-bottom:3px;line-height:1.4;}
+  .point-item p{font-size:11.2px;color:var(--sub);line-height:1.48;font-weight:500;}
+  .point-item p b{color:var(--blue-deep);font-weight:700;}
 </style>
 </head>
 <body>
@@ -211,7 +249,98 @@
     </div>
   </section>
 
-  <!-- 02 AGENDA -->
+  <!-- 02 SOLUTION MATRIX -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">[ Solution Framework ]</div>
+      <div class="subtext">HSAD의 기존 솔루션과 Wisebirds의 데이터·크리에이티브 역량을 결합하여,<br>광고 프로세스 전 단계를 AI로 자동화·간편화합니다.</div>
+      <div class="body-area">
+        <div class="matrix">
+          <!-- group headers -->
+          <div class="mx-corner"></div>
+          <div class="mx-group hsad">HSAD 기존 솔루션 활용</div>
+          <div class="mx-group wb">Wisebirds 솔루션 활용</div>
+
+          <!-- row: 분류 -->
+          <div class="mx-rowlabel">분류</div>
+          <div class="mx-head hsad">시장 분석</div>
+          <div class="mx-head hsad">타겟 도출</div>
+          <div class="mx-head wb">데이터 분석</div>
+          <div class="mx-head wb">크리에이티브 제작</div>
+
+          <!-- row: AI 간편화 -->
+          <div class="mx-rowlabel">AI<br>간편화</div>
+          <div class="mx-cell hsad"><p>트렌드·이슈 리서치를 자동화해 시장을 파악하는 시간을 대폭 단축</p></div>
+          <div class="mx-cell hsad"><p>데이터 기반으로 유효 타겟·페르소나를 자동 도출, 경험과 감(感)에 의존하던 세그먼트 정의를 정교화</p></div>
+          <div class="mx-cell wb"><p>매체별로 흩어진 성과 데이터를 통합·해석해 인사이트 도출을 자동화</p></div>
+          <div class="mx-cell wb"><p>카피·이미지·영상 소재를 대량·신속하게 생성해 제작 리드타임과 비용을 최소화</p></div>
+
+          <!-- row: 핵심 기능 -->
+          <div class="mx-rowlabel soft">핵심<br>기능</div>
+          <div class="mx-cell feat hsad"><span class="lead">실시간 트렌드 모니터링</span><p>검색 급상승·소셜 이슈·경쟁사 광고를 실시간 수집해 업종별 시장 동향 리포트를 자동 생성</p></div>
+          <div class="mx-cell feat hsad"><span class="lead">세그먼트 자동 클러스터링</span><p>고객 데이터를 군집화해 페르소나별 관심 키워드·최적 매체·메시지 톤을 추천</p></div>
+          <div class="mx-cell feat wb"><span class="lead">성과-비주얼 상관 분석</span><p>소재별 CTR/CVR과 비주얼 특징(색·구성·레이아웃)의 상관 패턴을 도출</p></div>
+          <div class="mx-cell feat wb"><span class="lead">멀티 소재 자동 생성</span><p>실시간 키워드 카피 · 성과 기반 이미지 · 롱폼→숏폼 영상 자동 편집</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 DATA-OPS : 성과 기반 자동 온/오프 및 운영 룰 -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow">[ 데이터 분석 기반 · 성과 운영 ]</div>
+      <div class="headline">성과 기반 자동 온/오프 및 운영 룰 설정</div>
+      <div class="ops-note">
+        <p><b>룰 기반 자동화</b> — 시스템이 자동으로 온/오프를 수행하려면 명확한 조건(Rule Base)이 필요하지만, 광고 운영 현실상 단순히 <b>"효율 안 좋으니 다 꺼라"</b>식의 기계적 접근은 불가능. 아래와 같은 정교한 운영 로직이 전제되어야 함.</p>
+      </div>
+
+      <div class="body-area">
+        <div class="sec-label">구체적 운영 로직 제안</div>
+        <div class="flow-row">
+          <div class="num-card">
+            <span class="step">1</span>
+            <h3>최소 운영 기간 보장</h3>
+            <p>성과를 판단하기 위해 데이터를 축적하는 최소한의 기간(<b>예: 1주일</b>)을 설정해, 조기 판단으로 인한 소재 사장을 방지</p>
+          </div>
+          <div class="num-card">
+            <span class="step">2</span>
+            <h3>상대적 하위 기준 정량화</h3>
+            <p>목표 CPA/CPC의 <b>절대 수치를 일괄 적용</b>하기보다, 브랜드별 상황을 고려해 <b>'하위 20~30% 성과 소재'</b>를 추출하는 방식으로 설계</p>
+          </div>
+          <div class="num-card">
+            <span class="step">3</span>
+            <h3>커스텀 필터 제공</h3>
+            <p>광고주·운영자가 오프(Off) 기준과 교체 시그널을 직접 설정하는 양식을 제공, 시스템은 <b>얼럿·가이드라인을 대시보드로 시각화</b></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="body-area">
+        <div class="sec-label">추가 논의 포인트</div>
+        <div class="point-grid">
+          <div class="point-item">
+            <span class="bullet"></span>
+            <div><span class="tt">인텐트릭스 활용성</span><p>기존 담당자 판단과 크게 다르지 않아 신규 인사이트는 제한적이나, 퍼포먼스 소재의 <b>중간 포인트 메시지 추출</b> 및 'PT 시 실제 고객 조사 기반' 소구로 활용 가능</p></div>
+          </div>
+          <div class="point-item">
+            <span class="bullet"></span>
+            <div><span class="tt">타겟 세분화 vs 자동 최적화</span><p>다수 페르소나 생성이 매체 타겟팅과 연결되지 않는 단절 존재. 논타겟팅 자동 최적화 성과 우위 → <b>소재 반응 기반 운영</b>으로 전환</p></div>
+          </div>
+          <div class="point-item">
+            <span class="bullet"></span>
+            <div><span class="tt">이미지 자동화 방향</span><p>JPG 분리 → <b>PSD 우선</b> 접근으로 전환(레이어 유지로 디자이너 후리터칭 확보). 단, 복잡 레이어·그라데이션은 AI 활용 한계</p></div>
+          </div>
+          <div class="point-item">
+            <span class="bullet"></span>
+            <div><span class="tt">상호 피드백</span><p>HSAD가 <b>퍼포먼스·매체 운영 현실 관점</b>의 가감 없는 피드백을 WB에 요청</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 AGENDA -->
   <section class="slide">
     <div class="slide-inner">
       <div class="eyebrow">[ Creative Idea ]</div>
@@ -244,12 +373,6 @@
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- 03 DIVIDER 1 -->
-  <section class="slide">
-    <div class="divider-num" style="color:var(--p1);">01</div>
-    <div class="divider-title">1. 실시간성 반영</div>
   </section>
 
   <!-- 04 IDEA1 : 개요 + 필요데이터 + 분석방식 -->
@@ -312,13 +435,7 @@
     </div>
   </section>
 
-  <!-- 05 DIVIDER 2 -->
-  <section class="slide">
-    <div class="divider-num" style="color:var(--p3);">02</div>
-    <div class="divider-title">2. 업종별 데이터 기반 크리에이티브</div>
-  </section>
-
-  <!-- 06 IDEA2 : 개요 + 필요데이터 + flow -->
+  <!-- 04 IDEA2 : 개요 + 필요데이터 + flow -->
   <section class="slide">
     <div class="slide-inner">
       <div class="eyebrow">2. 업종별 데이터 기반 크리에이티브</div>
@@ -386,13 +503,7 @@
     </div>
   </section>
 
-  <!-- 07 DIVIDER 3 -->
-  <section class="slide">
-    <div class="divider-num" style="color:var(--p5);">03</div>
-    <div class="divider-title">3. 숏폼 영상 대량생산</div>
-  </section>
-
-  <!-- 08 IDEA3 : 개요 + 필요데이터 + flow -->
+  <!-- 05 IDEA3 : 개요 + 필요데이터 + flow -->
   <section class="slide">
     <div class="slide-inner">
       <div class="eyebrow">3. 숏폼 영상 대량생산</div>
